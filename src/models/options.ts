@@ -1,4 +1,4 @@
-export const REASONING_EFFORTS = ["none", "low", "medium", "high", "xhigh", "max"] as const;
+export const REASONING_EFFORTS = ["none", "minimal", "low", "medium", "high", "xhigh", "max"] as const;
 
 export type ReasoningEffort = typeof REASONING_EFFORTS[number];
 export const DEFAULT_REASONING_EFFORT: ReasoningEffort = "high";
@@ -163,6 +163,7 @@ function formatEffortLabel(value: ReasoningEffort): string {
 function effortDescription(value: ReasoningEffort): string {
   switch (value) {
     case "none": return "Disable model reasoning";
+    case "minimal": return "Request minimal model reasoning";
     case "low": return "Use less reasoning for lower latency and cost";
     case "medium": return "Balance reasoning depth, latency, and cost";
     case "high": return "Use deeper reasoning for complex tasks";

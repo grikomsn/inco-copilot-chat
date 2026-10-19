@@ -5,7 +5,7 @@
 - These instructions apply to the entire repository.
 - This is a strict-TypeScript VS Code `LanguageModelChatProvider`. Use Node.js 22+ and npm; `package-lock.json` is authoritative.
 - Install from a clean checkout with `npm ci`.
-- The extension is **Inco** (independent, not affiliated with Inco AI) and bridges VS Code to the public **Inco AI** service at `api.inco.com`. Docs must keep that split: extension = Inco, service = Inco AI.
+- The extension is **Inco** (independent, not affiliated with Inco AI) and bridges VS Code to the public **Inco AI** service at `api.inco.ai`. Docs must keep that split: extension = Inco, service = Inco AI.
 
 ## Code map
 
@@ -13,13 +13,14 @@
 - `src/commands/commands.ts`: commands, diagnostics, and connection workflows.
 - `src/auth/auth.ts`: credential fingerprint helper (VS Code owns the API keys).
 - `src/provider.ts`: VS Code provider integration, native-entry registration, model discovery, and request lifecycle.
-- `src/provider-profile.ts`: entry ID validation, native-entry generations, and qualified model IDs.
+- `src/provider-profile.ts`: in-memory native-entry credentials and credential references.
 - `src/provider/`: message conversion, request construction, response reporting, and retry policy.
+- `scripts/probe-models.mjs`: explicit, paid synthetic capability probes; logs metadata only.
 - `src/models/`: live catalog, public fallback snapshot, persisted per-credential caches, reasoning options, and pricing.
 - `src/transport/`: fixed endpoints, request identity, errors, and incremental SSE parsing.
 - `src/usage/`: local usage tracking, cost estimates, and status-bar rendering.
 - `src/vscode/`: proposed VS Code API type augmentations.
-- `scripts/refresh-models.mjs`: model-metadata resync automation (report/apply/pr/ci modes).
+- `scripts/refresh-models.mjs`: public fallback metadata resync and CI reporting.
 - Tests are colocated as `src/**/*.test.ts` using `node:test`; `test/native/index.js` drives an end-to-end provider harness with injected VS Code fakes. `out/` and `*.vsix` are generated artifacts.
 
 ## Commands
@@ -28,7 +29,7 @@
 - `npm test` or `npm run check` — compile and run all Node test files.
 - `npm run package` — validate and build the installable VSIX.
 - `npm run watch` — compile continuously; press F5 with the launch configuration for an Extension Development Host.
-- `npm run refresh-models` — report hosted-model drift; `--apply` edits bundled metadata, `--pr` opens a resync pull request.
+- `npm run refresh-models` — refresh public fallback metadata; the scheduled workflow opens a resync pull request when metadata changes.
 
 ## Working agreements
 

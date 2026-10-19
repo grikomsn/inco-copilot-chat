@@ -1,5 +1,9 @@
 ---
-"inco-copilot-chat": minor
+"inco-copilot-chat": major
 ---
 
-Introduce the Inco provider for GitHub Copilot Chat with native secure API-key entries, authenticated model discovery, streamed reasoning and tools, context controls, local usage estimates, and an optional Inco-served-only routing filter.
+Release the Inco provider for GitHub Copilot Chat with native secure API-key entries, authenticated model discovery, streamed reasoning and tools, context controls, local usage estimates, and an optional Inco-served-only routing filter.
+
+Align extension artwork and repository documentation with the sister projects, and use per-model thinking controls verified through live Inco probes.
+
+Offer only verified reasoning-off controls and structured tool capabilities, including standard/Fast route differences and DeepSeek forced-tool validation.

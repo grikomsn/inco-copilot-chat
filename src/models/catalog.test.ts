@@ -24,8 +24,8 @@ test("reasoning controls use model-specific effort lists and explicit capability
     { id: "glm-5.3", capabilities: { reasoning_effort: false } },
     { id: "new-model", reasoning_efforts: ["bad", "low", "high"] },
   ] });
-  assert.deepEqual(models.find((m) => m.id === "kimi-k3:fast")?.reasoningEfforts, ["low", "high", "max"]);
-  assert.deepEqual(models.find((m) => m.id === "deepseek-v4.1-flash")?.reasoningEfforts, ["none", "high", "max"]);
+  assert.deepEqual(models.find((m) => m.id === "kimi-k3:fast")?.reasoningEfforts, ["none", "minimal", "low", "medium", "high", "xhigh", "max"]);
+  assert.deepEqual(models.find((m) => m.id === "deepseek-v4.1-flash")?.reasoningEfforts, ["none", "minimal", "low", "medium", "high", "xhigh", "max"]);
   assert.equal(models.find((m) => m.id === "glm-5.3")?.reasoningEfforts, undefined);
   assert.deepEqual(models.find((m) => m.id === "new-model")?.reasoningEfforts, ["low", "high"]);
 });

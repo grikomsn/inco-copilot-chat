@@ -2,6 +2,8 @@ import { modelCostFromApi, type ModelCost } from "./pricing";
 import type { ReasoningEffort } from "./options";
 import snapshot from "./snapshot.json";
 import { modelServing, type ModelServing } from "./privacy";
+import { reasoningProfile } from "./reasoning";
+import { modelToolCalling } from "./tools";
 
 export const DEFAULT_MAX_INPUT_TOKENS = 131_072;
 // Inco does not advertise output limits; reserve a conservative request budget.
@@ -47,9 +49,7 @@ export function modelCatalogFromApi(payload: unknown): IncoModelMetadata[] {
     const contextLength = positive(entry.context_length) ?? DEFAULT_MAX_INPUT_TOKENS;
     const maxOutputTokens = Math.min(positive(entry.max_output_tokens ?? entry.max_completion_tokens)
       ?? DEFAULT_MAX_OUTPUT_TOKENS, contextLength - 1);
-    // The boolean says effort is supported, but does not enumerate allowed values.
-    // Known model families use their documented effort lists; unknown ones omit control.
-    const efforts = capabilities?.reasoning_effort === false ? undefined : reasoningEfforts(id, entry.reasoning_efforts);
+    const profile = reasoningProfile(id, entry.reasoning_efforts, capabilities?.reasoning_effort);
     const cost = modelCostFromApi(entry.pricing);
     models.set(id, {
       id,
@@ -58,9 +58,9 @@ export function modelCatalogFromApi(payload: unknown): IncoModelMetadata[] {
       contextLength,
       maxOutputTokens,
       imageInput: Array.isArray(modalities?.input) && modalities.input.includes("image"),
-      toolCalling: typeof capabilities?.tool_calling === "boolean" ? capabilities.tool_calling : true,
+      toolCalling: modelToolCalling(id, capabilities?.tool_calling ?? entry.tool_calling),
       serving: modelServing(id, entry.operator),
-      ...(efforts ? { reasoningEfforts: efforts, defaultReasoningEffort: efforts.includes("high") ? "high" : efforts[0] } : {}),
+      ...(profile ? { reasoningEfforts: profile.efforts, defaultReasoningEffort: profile.defaultEffort } : {}),
       ...(cost ? { cost } : {}),
       ...(typeof entry.description === "string" && entry.description ? { description: entry.description } : {}),
       ...(typeof entry.created === "number" && Number.isFinite(entry.created)
@@ -68,18 +68,6 @@ export function modelCatalogFromApi(payload: unknown): IncoModelMetadata[] {
     });
   }
   return orderModels([...models.keys()]).map((id) => models.get(id)!);
-}
-
-function reasoningEfforts(id: string, advertised: unknown): readonly ReasoningEffort[] | undefined {
-  const valid = ["none", "low", "medium", "high", "xhigh", "max"] as const;
-  if (Array.isArray(advertised)) {
-    const efforts = advertised.filter((entry): entry is ReasoningEffort => valid.includes(entry));
-    return efforts.length ? [...new Set(efforts)] : undefined;
-  }
-  if (/^(kimi-k3|glm-5\.3)/.test(id)) return ["low", "high", "max"];
-  if (id.startsWith("deepseek-v4")) return ["none", "high", "max"];
-  // MiniMax's default thinking is preserved unless the API enumerates efforts.
-  return undefined;
 }
 
 export function getModelMetadata(id: string): IncoModelMetadata {

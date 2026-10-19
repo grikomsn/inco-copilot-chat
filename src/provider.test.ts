@@ -89,6 +89,26 @@ test("routing filter updates discovery and blocks stale selections without disca
   } finally { configurationValues.clear(); }
 });
 
+test("validates forced DeepSeek tools without silently changing the selected effort", async () => {
+  const stream = 'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"one","function":{"name":"run","arguments":"{}"}}]},"finish_reason":"tool_calls"}]}\n\n';
+  const { provider, requests } = setup(stream, { data: [{ id: "deepseek-v4.1-flash" }] });
+  const model = await nativeModel(provider);
+  const required = { ...options, toolMode: 2, tools: [{ name: "run", description: "Synthetic", inputSchema: {} }] };
+  await assert.rejects(provider.provideLanguageModelChatResponse(model, [userMessage], required, { report() {} }, token), /requires Reasoning Effort None/);
+  assert.equal(requests.length, 0);
+  await provider.provideLanguageModelChatResponse(model, [userMessage], { ...required, modelConfiguration: { reasoningEffort: "none" } }, { report() {} }, token);
+  assert.equal(JSON.parse(String(requests[0].body)).reasoning_effort, "none");
+});
+
+test("chat-only routes reject tool requests before sending an unsupported payload", async () => {
+  const { provider, requests } = setup("", { data: [{ id: "minimax-m3:fast" }] });
+  const model = await nativeModel(provider);
+  assert.equal(model.capabilities?.toolCalling, false);
+  await assert.rejects(provider.provideLanguageModelChatResponse(model, [userMessage], { ...options,
+    tools: [{ name: "run", description: "Synthetic", inputSchema: {} }] }, { report() {} }, token), /no verified function-tool support/);
+  assert.equal(requests.length, 0);
+});
+
 test("uses the native entry key and validates the streamed answer", async () => {
   const { provider, requests } = setup('data: {"choices":[{"delta":{"content":"ok"},"finish_reason":"stop"}]}\r\n\r\n');
   const model = await nativeModel(provider);

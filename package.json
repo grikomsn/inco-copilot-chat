@@ -1,7 +1,7 @@
 {
   "name": "inco-copilot-chat",
   "displayName": "Inco for GitHub Copilot Chat",
-  "description": "Use Inco AI models in GitHub Copilot Chat with your own API key. Independent extension, not affiliated with Inco AI.",
+  "description": "Use Inco AI models in GitHub Copilot Chat with your API key.",
   "version": "0.0.0",
   "publisher": "grikomsn",
   "icon": "assets/icon.png",
@@ -28,7 +28,8 @@
     "copilot",
     "copilot-chat",
     "api-key",
-    "language-model"
+    "language-model",
+    "reasoning"
   ],
   "activationEvents": [
     "onStartupFinished",
@@ -73,6 +74,7 @@
           "type": "string",
           "enum": [
             "none",
+            "minimal",
             "low",
             "medium",
             "high",
@@ -81,12 +83,13 @@
           ],
           "default": "high",
           "enumDescriptions": [
-            "Disable reasoning for the fastest response.",
-            "Use less reasoning for lower latency and cost.",
-            "Balance reasoning depth, latency, and cost.",
-            "Use deeper reasoning for complex tasks.",
-            "Use extra-high reasoning for especially difficult tasks.",
-            "Use the model's maximum reasoning effort."
+            "Disable reasoning only on models with a verified off control.",
+            "Request minimal reasoning when supported.",
+            "Request low reasoning effort.",
+            "Request medium reasoning effort.",
+            "Request high reasoning effort.",
+            "Request extra-high reasoning effort.",
+            "Request maximum reasoning effort."
           ],
           "description": "Default reasoning effort for supported models. The model picker overrides this setting; models without verified controls keep their server default."
         },
@@ -164,7 +167,8 @@
     "refresh-models": "node scripts/refresh-models.mjs",
     "prepackage": "npm run check",
     "package": "vsce package",
-    "vscode:prepublish": "npm run compile"
+    "vscode:prepublish": "npm run compile",
+    "probe-models": "node scripts/probe-models.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",

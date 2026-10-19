@@ -51,7 +51,7 @@ test("names the extension Inco while the service stays Inco AI", () => {
   for (const { title } of manifest.contributes.commands) assert.ok(!title.includes("Inco AI"), `command title mentions Inco AI: ${title}`);
   // The Inco AI service is named factually in descriptions, with unaffiliation stated.
   assert.match(manifest.description, /Inco AI/);
-  assert.match(manifest.description, /not affiliated/);
+  assert.match(readFileSync("README.md", "utf8"), /not affiliated with Inco AI/);
   assert.equal(manifest.contributes.configuration.properties["incoCopilot.inlineSuggestions"], undefined);
 });
 

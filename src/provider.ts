@@ -226,6 +226,9 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
     if (!apiKey) {
       throw new Error("This entry's API key was replaced or removed. Reselect its model in Manage Language Models.");
     }
+    if (options.tools?.length && model.capabilities?.toolCalling === false) {
+      throw new Error("This Inco route has no verified function-tool support. Use chat without tools or select a tool-capable model.");
+    }
     const reasoningEffort = resolveReasoningEffort(
       model.effortSpec,
       options.modelConfiguration,
@@ -498,7 +501,7 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
   }
 }
 
-const CATALOG_STATE_KEY = "incoCopilot.entryCatalogs.v1";
+const CATALOG_STATE_KEY = "incoCopilot.entryCatalogs.v2";
 const USAGE_STATE_KEY = "incoCopilot.entryUsage.v1";
 
 async function waitForRetry(milliseconds: number, signal: AbortSignal | null | undefined): Promise<void> {

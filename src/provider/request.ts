@@ -3,6 +3,7 @@ import { resolveMaxOutputTokens } from "../models/catalog";
 import { applyReasoningEffort, type ReasoningEffort } from "../models/options";
 import { trimHistoryToFit } from "./history-trim";
 import { convertMessages } from "./messages";
+import { requiresNonThinkingTools } from "../models/tools";
 
 export function buildRequest(
   model: string,
@@ -15,6 +16,10 @@ export function buildRequest(
   contextCapTokens?: number,
 ): Record<string, unknown> {
   const maxTokens = resolveMaxOutputTokens(configuredMaxTokens, advertisedMaxTokens);
+  if (options.tools?.length && options.toolMode === vscode.LanguageModelChatToolMode.Required
+    && requiresNonThinkingTools(model) && reasoningEffort !== "none") {
+    throw new Error("Standard DeepSeek V4.1 Flash requires Reasoning Effort None for forced tool calls. Select None or use the Fast route.");
+  }
   const convertedMessages = convertMessages(messages, imageInput);
   const requestMessages = contextCapTokens === undefined
     ? convertedMessages

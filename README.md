@@ -1,85 +1,64 @@
-# Inco for GitHub Copilot Chat
+<p align="center">
+  <img src="https://raw.githubusercontent.com/grikomsn/inco-copilot-chat/main/assets/cover.jpg" alt="Inco and GitHub Copilot" width="960">
+</p>
 
-![Inco for GitHub Copilot Chat](assets/cover.jpg)
+<h1 align="center">Inco for GitHub Copilot Chat</h1>
 
-[![CI](https://github.com/grikomsn/inco-copilot-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/grikomsn/inco-copilot-chat/actions/workflows/ci.yml)
-[![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/grikomsn.inco-copilot-chat)](https://marketplace.visualstudio.com/items?itemName=grikomsn.inco-copilot-chat)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<p align="center">Use Inco AI models directly from the GitHub Copilot Chat model picker in Visual Studio Code.</p>
 
-Use [Inco AI](https://platform.inco.ai/docs) models directly in GitHub Copilot Chat with your own API key. This independent extension is not affiliated with Inco AI, GitHub, or Microsoft.
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=grikomsn.inco-copilot-chat"><img src="https://img.shields.io/visual-studio-marketplace/v/grikomsn.inco-copilot-chat?style=flat-square&logo=visualstudiocode&label=Marketplace" alt="Visual Studio Marketplace version"></a>
+  <a href="https://github.com/grikomsn/inco-copilot-chat/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/grikomsn/inco-copilot-chat/ci.yml?branch=main&style=flat-square&label=CI" alt="CI status"></a>
+  <a href="https://github.com/grikomsn/inco-copilot-chat/blob/main/LICENSE"><img src="https://img.shields.io/github/license/grikomsn/inco-copilot-chat?style=flat-square" alt="MIT license"></a>
+</p>
 
-## Features
+This extension is a native VS Code `LanguageModelChatProvider`. It validates your Inco API key, discovers the models available to your workspace, and streams OpenAI-compatible chat completions directly from `https://api.inco.ai/v1` into Copilot Chat.
 
-- Native **Manage Language Models** provider entries, with API keys stored securely by VS Code.
-- Live, authenticated model discovery, including standard and `:fast` tiers available to your workspace.
-- Streamed answers and reasoning, parallel tool calls, tool-result follow-ups, and cancellation.
-- Model-specific reasoning controls and selectable context budgets.
-- An optional Inco-served-only filter that hides relayed and unclassified models.
-- Context windows, explicit image capabilities, and token prices from Inco's live catalog.
-- Device-local usage counters and estimated spend, with links to authoritative dashboard billing.
-- No production runtime dependencies, custom API gateways, or extension telemetry.
+## Highlights
+
+- Direct Inco integration without a local proxy
+- API keys owned by VS Code native provider configuration
+- Multiple isolated entries, identified by their group names in Manage Language Models
+- Live `/v1/models` discovery with durable per-credential catalog snapshots
+- Streaming text, reasoning output, images where advertised, token usage, and parallel function-tool calls
+- Per-route reasoning and tool capabilities based on live probes
+- Selectable context budgets, cancellation, and total/idle stream timeouts
+- Bounded retries for pre-stream transient failures only
+- Device-local token usage and estimated spend, with an authoritative dashboard link
+- An optional Inco-served-only filter that hides relayed and unclassified models
 
 ## Quick start
 
-1. Install VS Code **1.125+**, GitHub Copilot Chat, and this extension.
-2. Create an API key in [Inco API Keys](https://platform.inco.ai/keys) and ensure your workspace has credit.
-3. Open Copilot Chat's model picker, choose **Manage Language Models**, and add **Inco**.
-4. Enter your API key, select the models you want, and choose an Inco model in chat.
-5. Run **Inco: Test Inference** to verify a real inference request.
+1. Install the extension. You need VS Code 1.125 or newer and GitHub Copilot Chat.
+2. Create an API key in [Inco Platform](https://platform.inco.ai/keys), or run **Inco: Open API Keys**.
+3. Open Copilot Chat, select **Manage Models**, add an **Inco** provider entry, name it, and enter the key.
+4. Choose a model available to that workspace.
 
-Provider entries keep their own keys. A successful empty model list remains empty; it is never replaced with public models you cannot access. A bundled public catalog is used only when discovery is temporarily unavailable. Workspace relay restrictions remain controlled by Inco; a `403` permission error does not invalidate your API key.
+To use more than one key, add another **Inco** entry with a different name. The entry name is its identity: VS Code namespaces each entry's models per group, stores the key securely, and offers key updates on the entry. Deleting an entry removes its VS Code-owned credential. Commands and local usage use the most recently provisioned entry; chat requests use their selected entry's exact key.
 
-## Models and reasoning
+Use **Inco: Manage Connection** to open native provider configuration, **Inco: Test Inference** to verify a real response, and **Inco: Show Local Usage** to inspect device-local activity. The extension does not load `.env` during normal use.
 
-Inco's public catalog currently includes Kimi K3, DeepSeek V4.1 Flash, GLM 5.3, GLM 5.3 Flash, and MiniMax M3, including fast tiers. Your authenticated catalog is authoritative. See [model metadata](docs/models.md).
+## Routing and data settings
 
-The picker exposes verified reasoning controls for known model families. Unknown models keep the server default unless the catalog enumerates supported efforts. Image input is enabled only when the catalog explicitly advertises it. Output defaults to a conservative **16,384-token request budget** when the API omits a limit; this is not a claim about the model's maximum output capacity.
+Set `incoCopilot.incoServedOnly` to `true` to show and allow only verified Inco-served models. The filter also applies to cached and fallback catalogs and blocks requests from previously selected hidden models. Unknown operators stay hidden until classified. Some standard-tier models are Inco-served; a `:fast` suffix alone does not establish routing.
 
-The **Inco Served Only** setting filters routing, including cached and fallback models, and blocks requests from previously selected hidden models. It does not guarantee zero data retention. Inco’s [current privacy policy](https://inco.ai/legal/privacy/) explains the storage and training controls separately from Passthrough routing. Disable the relevant dashboard storage/training settings when you require those controls; the extension cannot read or change them. Some standard-tier models are Inco-served.
+This routing filter does not guarantee zero data retention. Inco's dashboard **Store & Improve**, **Training**, and **Allow relayed models** controls determine storage, training, and relay access. See the [current Inco privacy policy](https://inco.ai/legal/privacy/) and [security model](docs/security.md).
 
-## Commands
+## Documentation
 
-| Command | Purpose |
-| --- | --- |
-| Inco: Manage Connection | Open native provider configuration |
-| Inco: Refresh Models | Refresh the active entry's entitled catalog |
-| Inco: Test Inference | Send a short connection-check prompt |
-| Inco: Show Local Usage | Show local activity and estimated spend |
-| Inco: Open Dashboard Usage | Open authoritative usage and billing |
-| Inco: Open API Keys | Open the Inco key dashboard |
-| Inco: Show Diagnostics | Show endpoint and configuration status without secrets |
+- [Setup, settings, and troubleshooting](docs/setup.md)
+- [Models, reasoning controls, and pricing](docs/models.md)
+- [API key and security model](docs/security.md)
+- [Development and releases](docs/development.md)
 
-## Settings
+## Related projects
 
-| Setting | Default | Purpose |
-| --- | --- | --- |
-| `incoCopilot.incoServedOnly` | `false` | Show and allow only verified Inco-served models |
-| `incoCopilot.reasoningEffort` | `high` | Default supported effort; picker selection overrides it |
-| `incoCopilot.maxOutputTokens` | `16384` | Output request budget; `0` uses catalog/default budget |
-| `incoCopilot.requestTimeoutSeconds` | `600` | Total inference timeout |
-| `incoCopilot.streamIdleTimeoutSeconds` | `120` | Stream inactivity timeout |
-| `incoCopilot.catalogCacheMinutes` | `5` | Catalog refresh interval |
-| `incoCopilot.debugLogging` | `false` | Log operational metadata without prompts, responses, or API keys |
-| `incoCopilot.showUsageStatusBar` | `true` | Show local token usage |
+- [Codex Bridge for Copilot Chat](https://github.com/grikomsn/openai-oauth-copilot-chat) — Use OpenAI models in Copilot Chat with ChatGPT authentication.
+- [Grok for GitHub Copilot Chat](https://github.com/grikomsn/grok-copilot-chat) — Use xAI Grok models directly from the model picker.
+- [Inception for GitHub Copilot Chat](https://github.com/grikomsn/inception-copilot-chat) — Use Inception Mercury models directly from the model picker.
+- [Ollama Cloud for GitHub Copilot Chat](https://github.com/grikomsn/ollama-cloud-copilot-chat) — Use Ollama Cloud models with native thinking and tool support.
+- [OpenCode for GitHub Copilot Chat](https://github.com/grikomsn/opencode-copilot-chat) — Use OpenCode Console and Go models from the model picker.
+- [Orvix for GitHub Copilot Chat](https://github.com/grikomsn/orvix-copilot-chat) — Use Orvix managed and BYOK models from the model picker.
+- [Poolside for GitHub Copilot Chat](https://github.com/grikomsn/poolside-copilot-chat) — Use hosted Poolside coding models from the model picker.
 
-## Privacy and troubleshooting
-
-Chat history, tools, and supported images go directly to `https://api.inco.ai/v1`. Keys stay in VS Code-managed secret provider configuration. The extension does not read `.env` in normal use. The local development `.env` file is ignored by Git and excluded from VSIX packages.
-
-A `401` means an invalid key; `402` means exhausted credit; `403` can mean model entitlement or workspace relay policy; `429` means a workspace rate or spend limit. The extension surfaces Inco's message and retries transient network/server failures before streaming begins. See [security](docs/security.md) and [setup](docs/setup.md).
-
-## Development and releases
-
-```sh
-npm ci
-npm run check
-npm run package
-```
-
-Use Node.js 22+ and npm. Tests use injected HTTP fakes; live checks run separately in VS Code. The repository follows the sister extensions' colocated tests, issue templates, documentation, pinned CI actions, weekly public model resync, and Changesets release workflow.
-
-Add user-visible changes with `npm run changeset`. The release workflow opens a version PR; merging it publishes through the `VSCE_PAT` GitHub Actions secret and creates a GitHub release with the VSIX. See [development](docs/development.md) and [contributing](CONTRIBUTING.md).
-
-## License
-
-[MIT](LICENSE). Inco branding belongs to its respective owner; the extension icon comes from the public Inco platform site.
+Unofficial project; not affiliated with Inco AI, GitHub, or Microsoft. Inco usage limits and charges still apply. Licensed under [MIT](LICENSE).
