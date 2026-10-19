@@ -35,7 +35,7 @@ Inco's public catalog currently includes Kimi K3, DeepSeek V4.1 Flash, GLM 5.3, 
 
 The picker exposes verified reasoning controls for known model families. Unknown models keep the server default unless the catalog enumerates supported efforts. Image input is enabled only when the catalog explicitly advertises it. Output defaults to a conservative **16,384-token request budget** when the API omits a limit; this is not a claim about the model's maximum output capacity.
 
-The **Inco Served Only** setting filters routing, including cached and fallback models, and blocks requests from previously selected hidden models. It does not guarantee zero data retention. Inco’s [current privacy policy](https://inco.ai/legal/privacy/) makes Store & Improve, Training, and Passthrough independent account controls. Disable the relevant dashboard storage/training settings when you require those controls; the extension cannot read or change them. Some standard-tier models are Inco-served.
+The **Inco Served Only** setting filters routing, including cached and fallback models, and blocks requests from previously selected hidden models. It does not guarantee zero data retention. Inco’s [current privacy policy](https://inco.ai/legal/privacy/) explains the storage and training controls separately from Passthrough routing. Disable the relevant dashboard storage/training settings when you require those controls; the extension cannot read or change them. Some standard-tier models are Inco-served.
 
 ## Commands
 
