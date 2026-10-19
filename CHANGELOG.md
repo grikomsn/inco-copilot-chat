@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1
+
+### Patch Changes
+
+- c074967: Map aborted requests to a friendly "Request cancelled or timed out" message in
+  shared error formatting instead of surfacing the raw AbortError text.
+- 498c7ee: Replace the blank orange placeholder in the extension icon and repository cover with the supplied Inco logo, preserving the sister projects' Copilot artwork and layout.
+
 ## 1.0.0
 
 ### Major Changes
