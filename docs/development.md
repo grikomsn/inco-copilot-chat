@@ -28,6 +28,8 @@ node --env-file=.env scripts/probe-models.mjs --report-file /tmp/inco-probes.jso
 
 An HTTP 200 proves request acceptance. It does not prove that an effort changes reasoning depth or that a thinking flag disables reasoning. Compare the observed reasoning channel and completion behavior before exposing a control. Permission, balance, timeout, and server failures remain unresolved capabilities.
 
+The ten-route matrix contains 120 control cases when every route is accessible. The script records inference-control behavior only: structured tools and their follow-up turns, streaming, cancellation, image input, and maximum context/output limits require separate checks. The [documented-versus-observed comparison](models.md#documented-capabilities-versus-observed-behavior) records the probe date, route differences, native-host checks, and remaining validation gaps. Update that comparison and the verified profiles together when later probes establish changed behavior.
+
 ## Model resync
 
 `npm run refresh-models` refreshes public fallback metadata and writes a Changeset only when it changes. The weekly workflow uses that path to open a metadata PR. Account-private entitlements never enter the public snapshot. Reasoning profiles require explicit probe review; catalog refreshes do not widen them from family-name guesses.

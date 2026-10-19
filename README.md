@@ -47,7 +47,7 @@ This routing filter does not guarantee zero data retention. Inco's dashboard **S
 ## Documentation
 
 - [Setup, settings, and troubleshooting](docs/setup.md)
-- [Models, reasoning controls, and pricing](docs/models.md)
+- [Model capability differences, reasoning controls, and pricing](docs/models.md)
 - [API key and security model](docs/security.md)
 - [Development and releases](docs/development.md)
 
