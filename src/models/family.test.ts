@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { modelFamily } from "./family";
+
+test("groups namespaced models by their native family", () => {
+  assert.equal(modelFamily("deepseek-v4.1-flash"), "deepseek");
+  assert.equal(modelFamily("moonshotai/kimi-k3"), "moonshotai");
+  assert.equal(modelFamily("zai-org/glm-5.3-flash"), "zai");
+  assert.equal(modelFamily("kimi-k3"), "kimi");
+});

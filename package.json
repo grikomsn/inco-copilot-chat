@@ -1,0 +1,176 @@
+{
+  "name": "inco-copilot-chat",
+  "displayName": "Inco for GitHub Copilot Chat",
+  "description": "Use Inco AI models in GitHub Copilot Chat with your own API key. Independent extension, not affiliated with Inco AI.",
+  "version": "0.0.0",
+  "publisher": "grikomsn",
+  "icon": "assets/icon.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grikomsn/inco-copilot-chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/grikomsn/inco-copilot-chat/issues"
+  },
+  "homepage": "https://github.com/grikomsn/inco-copilot-chat#readme",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "AI",
+    "Chat",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "inco",
+    "inco-ai",
+    "copilot",
+    "copilot-chat",
+    "api-key",
+    "language-model"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguageModelChatProvider:inco"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "incoCopilot.manage",
+        "title": "Inco: Manage Connection"
+      },
+      {
+        "command": "incoCopilot.refreshModels",
+        "title": "Inco: Refresh Models"
+      },
+      {
+        "command": "incoCopilot.showUsage",
+        "title": "Inco: Show Local Usage"
+      },
+      {
+        "command": "incoCopilot.testConnection",
+        "title": "Inco: Test Inference"
+      },
+      {
+        "command": "incoCopilot.openApiKeys",
+        "title": "Inco: Open API Keys"
+      },
+      {
+        "command": "incoCopilot.diagnostics",
+        "title": "Inco: Show Diagnostics"
+      },
+      {
+        "command": "incoCopilot.openUsage",
+        "title": "Inco: Open Dashboard Usage"
+      }
+    ],
+    "configuration": {
+      "title": "Inco for Copilot Chat",
+      "properties": {
+        "incoCopilot.reasoningEffort": {
+          "type": "string",
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "default": "high",
+          "enumDescriptions": [
+            "Disable reasoning for the fastest response.",
+            "Use less reasoning for lower latency and cost.",
+            "Balance reasoning depth, latency, and cost.",
+            "Use deeper reasoning for complex tasks.",
+            "Use extra-high reasoning for especially difficult tasks.",
+            "Use the model's maximum reasoning effort."
+          ],
+          "description": "Default reasoning effort for supported models. The model picker overrides this setting; models without verified controls keep their server default."
+        },
+        "incoCopilot.maxOutputTokens": {
+          "type": "number",
+          "default": 16384,
+          "minimum": 0,
+          "description": "Maximum requested output tokens. Use 0 for the conservative 16,384-token budget when Inco omits an output limit."
+        },
+        "incoCopilot.requestTimeoutSeconds": {
+          "type": "number",
+          "default": 600,
+          "minimum": 10,
+          "description": "Maximum duration of an Inco inference request in seconds."
+        },
+        "incoCopilot.streamIdleTimeoutSeconds": {
+          "type": "number",
+          "default": 120,
+          "minimum": 10,
+          "description": "Maximum time without receiving streamed Inco response data before aborting a request."
+        },
+        "incoCopilot.catalogCacheMinutes": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "description": "How long the Inco model catalog is reused before refreshing."
+        },
+        "incoCopilot.debugLogging": {
+          "type": "boolean",
+          "default": false,
+          "description": "Log request, stream, usage, and model-discovery metadata to the Inco output channel. Prompts and API keys are never logged."
+        },
+        "incoCopilot.showUsageStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show locally tracked Inco token usage and estimated spend. The Inco dashboard is authoritative."
+        },
+        "incoCopilot.incoServedOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show and allow only verified Inco-served models. Hides relayed models and models with an unknown operator. This filters routing, not retention: Inco dashboard Store & Improve and Training settings still apply."
+        }
+      }
+    },
+    "languageModelChatProviders": [
+      {
+        "vendor": "inco",
+        "displayName": "Inco",
+        "configuration": {
+          "type": "object",
+          "required": [
+            "apiKey"
+          ],
+          "properties": {
+            "apiKey": {
+              "type": "string",
+              "title": "Inco API Key",
+              "description": "API key for this Inco provider entry. VS Code stores configured secrets securely.",
+              "secret": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('out',{recursive:true,force:true})\"",
+    "compile": "npm run clean && tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node --test \"out/**/*.test.js\"",
+    "check": "npm test",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "npm run check && vsce publish --skip-duplicate",
+    "refresh-models": "node scripts/refresh-models.mjs",
+    "prepackage": "npm run check",
+    "package": "vsce package",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@types/node": "^24.0.0",
+    "@types/vscode": "^1.125.0",
+    "@vscode/vsce": "^3.9.2",
+    "typescript": "^6.0.3"
+  }
+}
