@@ -2,7 +2,7 @@
   "name": "inco-copilot-chat",
   "displayName": "Inco for GitHub Copilot Chat",
   "description": "Use Inco AI models in GitHub Copilot Chat with your API key.",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "publisher": "grikomsn",
   "icon": "assets/icon.png",
   "license": "MIT",
