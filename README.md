@@ -44,6 +44,8 @@ Set `incoCopilot.incoServedOnly` to `true` to show and allow only verified Inco-
 
 This routing filter does not guarantee zero data retention. Inco's dashboard **Store & Improve**, **Training**, and **Allow relayed models** controls determine storage, training, and relay access. See the [current Inco privacy policy](https://inco.ai/legal/privacy/) and [security model](docs/security.md).
 
+Context token counts are estimates. Tool-result text, tool arguments, thinking, and image inputs are included in context budgeting. If the service rejects a full context window, run `/compact` in Copilot Chat, reduce attachments or tool output, or start a new chat.
+
 ## Documentation
 
 - [Setup, settings, and troubleshooting](docs/setup.md)
