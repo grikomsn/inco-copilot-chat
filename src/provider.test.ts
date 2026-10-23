@@ -73,12 +73,12 @@ const userMessage = { role: 1, content: [new TextPart("public fixture")] } as un
 const options: vscode.ProvideLanguageModelChatResponseOptions = { toolMode: 1, requestInitiator: "test" };
 
 test("routing filter updates discovery and blocks stale selections without discarding the complete catalog", async () => {
-  const { provider, requests } = setup("", { data: [{ id: "kimi-k3" }, { id: "minimax-m3" }, { id: "unknown:fast" }] });
+  const { provider, requests } = setup("", { data: [{ id: "kimi-k3" }, { id: "glm-5.3" }, { id: "unknown:fast" }] });
   const prepare = (): Promise<import("./provider").IncoModel[]> => provider.provideLanguageModelChatInformation(
     { configuration: { apiKey: "entry-fixture" } }, token);
   const before = await prepare();
   assert.equal(before.length, 3);
-  const relayed = before.find((model) => model.rawModelId === "minimax-m3")!;
+  const relayed = before.find((model) => model.rawModelId === "glm-5.3")!;
   try {
     configurationValues.set("incoServedOnly", true);
     assert.deepEqual((await prepare()).map((model) => model.rawModelId), ["kimi-k3"]);
@@ -101,7 +101,7 @@ test("validates forced DeepSeek tools without silently changing the selected eff
 });
 
 test("chat-only routes reject tool requests before sending an unsupported payload", async () => {
-  const { provider, requests } = setup("", { data: [{ id: "minimax-m3:fast" }] });
+  const { provider, requests } = setup("", { data: [{ id: "unknown:fast" }] });
   const model = await nativeModel(provider);
   assert.equal(model.capabilities?.toolCalling, false);
   await assert.rejects(provider.provideLanguageModelChatResponse(model, [userMessage], { ...options,

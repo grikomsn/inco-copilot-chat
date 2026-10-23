@@ -1,13 +1,14 @@
 /**
  * Operator classifications verified against https://platform.inco.ai/models
- * on 2026-10-19. Tier names alone do not establish routing or retention.
+ * on 2026-10-23. Tier names alone do not establish routing or retention.
  * Inco's Store & Improve setting remains independent of the operator.
  */
 const INCO_SERVED = new Set([
-  "kimi-k3", "kimi-k3:fast", "glm-5.3", "glm-5.3:fast",
-  "deepseek-v4.1-flash:fast", "glm-5.3-flash:fast", "minimax-m3:fast",
+  "kimi-k3", "kimi-k3:fast", "glm-5.3:fast",
+  "deepseek-v4.1-flash:fast", "glm-5.3-flash:fast",
+  "minimax-m3.1-flash", "minimax-m3.1-flash:fast",
 ]);
-const RELAYED = new Set(["deepseek-v4.1-flash", "glm-5.3-flash", "minimax-m3"]);
+const RELAYED = new Set(["deepseek-v4.1-flash", "glm-5.3-flash", "glm-5.3"]);
 
 export type ModelServing = "inco" | "relayed" | "unknown";
 
