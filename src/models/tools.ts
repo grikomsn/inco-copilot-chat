@@ -1,7 +1,8 @@
-/** Routes with structured function calls verified in the native host, 2026-10-19. */
+/** Routes with structured function calls verified in the native host, 2026-10-23. */
 const VERIFIED_TOOL_MODELS = new Set([
   "deepseek-v4.1-flash", "deepseek-v4.1-flash:fast", "kimi-k3", "kimi-k3:fast",
-  "glm-5.3", "glm-5.3:fast", "glm-5.3-flash", "glm-5.3-flash:fast", "minimax-m3",
+  "glm-5.3", "glm-5.3:fast", "glm-5.3-flash", "glm-5.3-flash:fast",
+  "minimax-m3.1-flash", "minimax-m3.1-flash:fast",
 ]);
 
 export function modelToolCalling(id: string, advertised: unknown): boolean {

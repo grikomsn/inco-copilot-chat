@@ -3,10 +3,10 @@ import test from "node:test";
 import { reasoningProfile } from "./reasoning";
 
 test("offers Off only where a reasoning-free answer was observed", () => {
-  for (const id of ["kimi-k3", "kimi-k3:fast", "deepseek-v4.1-flash", "deepseek-v4.1-flash:fast", "minimax-m3"]) {
+  for (const id of ["kimi-k3", "kimi-k3:fast", "deepseek-v4.1-flash", "deepseek-v4.1-flash:fast", "minimax-m3.1-flash"]) {
     assert.ok(reasoningProfile(id, undefined, true)?.efforts.includes("none"));
   }
-  for (const id of ["glm-5.3", "glm-5.3:fast", "glm-5.3-flash", "glm-5.3-flash:fast", "minimax-m3:fast"]) {
+  for (const id of ["glm-5.3", "glm-5.3:fast", "glm-5.3-flash", "glm-5.3-flash:fast", "minimax-m3.1-flash:fast"]) {
     assert.equal(reasoningProfile(id, undefined, true)?.efforts.includes("none"), false);
   }
 });
@@ -14,7 +14,7 @@ test("offers Off only where a reasoning-free answer was observed", () => {
 test("does not generalize hosted effort acceptance to the standard Kimi route", () => {
   assert.deepEqual(reasoningProfile("kimi-k3", undefined, true)?.efforts, ["none", "low", "high", "max"]);
   assert.ok(reasoningProfile("kimi-k3:fast", undefined, true)?.efforts.includes("minimal"));
-  assert.equal(reasoningProfile("glm-5.3", undefined, true)?.efforts.includes("minimal"), false);
+  assert.deepEqual(reasoningProfile("glm-5.3", undefined, true)?.efforts, ["low", "high", "max"]);
   assert.deepEqual(reasoningProfile("glm-5.3-flash", undefined, true)?.efforts, ["low", "high", "max"]);
 });
 

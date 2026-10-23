@@ -8,7 +8,10 @@ test("bundled public catalog preserves fast tiers, prices and explicit modalitie
   assert.equal(fast.contextLength, 1_048_576);
   assert.equal(fast.imageInput, true);
   assert.deepEqual(fast.cost, { input: 0.6, cacheRead: 0.012, output: 2.4 });
-  assert.equal(FALLBACK_MODEL_METADATA.find((m) => m.id === "deepseek-v4.1-flash")?.imageInput, false);
+  assert.equal(FALLBACK_MODEL_METADATA.find((m) => m.id === "deepseek-v4.1-flash")?.imageInput, true);
+  const minimax = FALLBACK_MODEL_METADATA.find((m) => m.id === "minimax-m3.1-flash")!;
+  assert.equal(minimax.imageInput, true);
+  assert.deepEqual(minimax.cost, { input: 0.15, cacheRead: 0.03, output: 0.6 });
 });
 test("live catalogs are authoritative, including an empty entitled list", () => {
   assert.deepEqual(modelCatalogFromApi({ data: [] }), []);
