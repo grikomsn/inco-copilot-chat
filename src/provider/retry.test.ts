@@ -19,5 +19,6 @@ test("uses bounded backoff and Retry-After seconds", () => {
     [250, 500, 1_000, 2_000],
   );
   assert.equal(retryDelayMs(0, "3"), 3_000);
-  assert.equal(retryDelayMs(0, "99"), 99_000);
+  // Retry-After is honored but capped at 5 seconds like the sibling providers.
+  assert.equal(retryDelayMs(0, "99"), 5_000);
 });

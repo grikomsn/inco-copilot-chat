@@ -10,9 +10,9 @@ export function isTransientNetworkError(error: unknown): boolean {
 export function retryDelayMs(attempt: number, retryAfter: string | null = null): number {
   if (retryAfter) {
     const seconds = Number(retryAfter);
-    if (Number.isFinite(seconds) && seconds >= 0) return Math.min(2_147_483_647, seconds * 1_000);
+    if (Number.isFinite(seconds) && seconds >= 0) return Math.min(5_000, seconds * 1_000);
     const date = Date.parse(retryAfter);
-    if (Number.isFinite(date)) return Math.max(0, Math.min(2_147_483_647, date - Date.now()));
+    if (Number.isFinite(date)) return Math.max(0, Math.min(5_000, date - Date.now()));
   }
   return Math.min(2_000, 250 * 2 ** Math.max(0, attempt));
 }
