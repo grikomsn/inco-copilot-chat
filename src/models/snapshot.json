@@ -14,8 +14,23 @@
         "cached_input": 0.006,
         "output": 1.2
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive",
+          "disabled"
+        ],
+        "efforts": [
+          "none",
+          "minimal",
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default_mode": "enabled",
+        "default_effort": "high"
       },
       "modalities": {
         "input": [
@@ -44,8 +59,23 @@
         "cached_input": 0.012,
         "output": 2.4
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive",
+          "disabled"
+        ],
+        "efforts": [
+          "none",
+          "minimal",
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default_mode": "enabled",
+        "default_effort": "high"
       },
       "modalities": {
         "input": [
@@ -74,8 +104,21 @@
         "cached_input": 0.26,
         "output": 4.4
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive"
+        ],
+        "efforts": [
+          "minimal",
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default_mode": "enabled",
+        "default_effort": "max"
       },
       "modalities": {
         "input": [
@@ -103,8 +146,21 @@
         "cached_input": 0.03,
         "output": 0.5
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive"
+        ],
+        "efforts": [
+          "minimal",
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default_mode": "enabled",
+        "default_effort": "max"
       },
       "modalities": {
         "input": [
@@ -134,8 +190,21 @@
         "cached_input": 0.06,
         "output": 1
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive"
+        ],
+        "efforts": [
+          "minimal",
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default_mode": "enabled",
+        "default_effort": "max"
       },
       "modalities": {
         "input": [
@@ -165,8 +234,21 @@
         "cached_input": 0.52,
         "output": 8.8
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive"
+        ],
+        "efforts": [
+          "minimal",
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default_mode": "enabled",
+        "default_effort": "max"
       },
       "modalities": {
         "input": [
@@ -194,8 +276,21 @@
         "cached_input": 0.3,
         "output": 15
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive",
+          "disabled"
+        ],
+        "efforts": [
+          "none",
+          "low",
+          "medium",
+          "high",
+          "max"
+        ],
+        "default_mode": "enabled",
+        "default_effort": "max"
       },
       "modalities": {
         "input": [
@@ -224,8 +319,21 @@
         "cached_input": 0.6,
         "output": 30
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive",
+          "disabled"
+        ],
+        "efforts": [
+          "none",
+          "low",
+          "medium",
+          "high",
+          "max"
+        ],
+        "default_mode": "enabled",
+        "default_effort": "max"
       },
       "modalities": {
         "input": [
@@ -254,8 +362,21 @@
         "cached_input": 0.03,
         "output": 0.6
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive",
+          "disabled"
+        ],
+        "efforts": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default_mode": "adaptive",
+        "default_effort": "max"
       },
       "modalities": {
         "input": [
@@ -285,8 +406,21 @@
         "cached_input": 0.06,
         "output": 1.2
       },
-      "capabilities": {
-        "reasoning_effort": true
+      "reasoning": {
+        "modes": [
+          "enabled",
+          "adaptive",
+          "disabled"
+        ],
+        "efforts": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default_mode": "adaptive",
+        "default_effort": "max"
       },
       "modalities": {
         "input": [
