@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.5
+
+### Patch Changes
+
+- ba263d0: Cap the honored Retry-After delay at 5 seconds, matching the family's bounded backoff, so a long server-provided delay can no longer stall a request.
+
 ## 1.0.4
 
 ### Patch Changes
