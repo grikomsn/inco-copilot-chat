@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.4
+
+### Patch Changes
+
+- b87bf4f: Refresh the bundled public Inco model catalog.
+
 ## 1.0.3
 
 ### Patch Changes
