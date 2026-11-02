@@ -15,22 +15,22 @@
         "output": 1.2
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive",
-          "disabled"
-        ],
-        "efforts": [
-          "none",
-          "minimal",
-          "low",
-          "medium",
-          "high",
-          "xhigh",
-          "max"
-        ],
-        "default_mode": "enabled",
-        "default_effort": "high"
+        "modes": {
+          "supported": [
+            "enabled",
+            "disabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "none",
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "high"
+        }
       },
       "modalities": {
         "input": [
@@ -60,22 +60,22 @@
         "output": 2.4
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive",
-          "disabled"
-        ],
-        "efforts": [
-          "none",
-          "minimal",
-          "low",
-          "medium",
-          "high",
-          "xhigh",
-          "max"
-        ],
-        "default_mode": "enabled",
-        "default_effort": "high"
+        "modes": {
+          "supported": [
+            "enabled",
+            "disabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "none",
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "high"
+        }
       },
       "modalities": {
         "input": [
@@ -105,20 +105,20 @@
         "output": 4.4
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive"
-        ],
-        "efforts": [
-          "minimal",
-          "low",
-          "medium",
-          "high",
-          "xhigh",
-          "max"
-        ],
-        "default_mode": "enabled",
-        "default_effort": "max"
+        "modes": {
+          "supported": [
+            "enabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "max"
+        }
       },
       "modalities": {
         "input": [
@@ -147,20 +147,20 @@
         "output": 0.5
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive"
-        ],
-        "efforts": [
-          "minimal",
-          "low",
-          "medium",
-          "high",
-          "xhigh",
-          "max"
-        ],
-        "default_mode": "enabled",
-        "default_effort": "max"
+        "modes": {
+          "supported": [
+            "enabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "max"
+        }
       },
       "modalities": {
         "input": [
@@ -191,20 +191,20 @@
         "output": 1
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive"
-        ],
-        "efforts": [
-          "minimal",
-          "low",
-          "medium",
-          "high",
-          "xhigh",
-          "max"
-        ],
-        "default_mode": "enabled",
-        "default_effort": "max"
+        "modes": {
+          "supported": [
+            "enabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "max"
+        }
       },
       "modalities": {
         "input": [
@@ -235,20 +235,20 @@
         "output": 8.8
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive"
-        ],
-        "efforts": [
-          "minimal",
-          "low",
-          "medium",
-          "high",
-          "xhigh",
-          "max"
-        ],
-        "default_mode": "enabled",
-        "default_effort": "max"
+        "modes": {
+          "supported": [
+            "enabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "max"
+        }
       },
       "modalities": {
         "input": [
@@ -277,20 +277,20 @@
         "output": 15
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive",
-          "disabled"
-        ],
-        "efforts": [
-          "none",
-          "low",
-          "medium",
-          "high",
-          "max"
-        ],
-        "default_mode": "enabled",
-        "default_effort": "max"
+        "modes": {
+          "supported": [
+            "enabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "max"
+        }
       },
       "modalities": {
         "input": [
@@ -320,20 +320,20 @@
         "output": 30
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive",
-          "disabled"
-        ],
-        "efforts": [
-          "none",
-          "low",
-          "medium",
-          "high",
-          "max"
-        ],
-        "default_mode": "enabled",
-        "default_effort": "max"
+        "modes": {
+          "supported": [
+            "enabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "max"
+        }
       },
       "modalities": {
         "input": [
@@ -363,20 +363,24 @@
         "output": 0.6
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive",
-          "disabled"
-        ],
-        "efforts": [
-          "low",
-          "medium",
-          "high",
-          "xhigh",
-          "max"
-        ],
-        "default_mode": "adaptive",
-        "default_effort": "max"
+        "modes": {
+          "supported": [
+            "enabled",
+            "adaptive",
+            "disabled"
+          ],
+          "default": "adaptive"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "default": "max"
+        }
       },
       "modalities": {
         "input": [
@@ -407,20 +411,24 @@
         "output": 1.2
       },
       "reasoning": {
-        "modes": [
-          "enabled",
-          "adaptive",
-          "disabled"
-        ],
-        "efforts": [
-          "low",
-          "medium",
-          "high",
-          "xhigh",
-          "max"
-        ],
-        "default_mode": "adaptive",
-        "default_effort": "max"
+        "modes": {
+          "supported": [
+            "enabled",
+            "adaptive",
+            "disabled"
+          ],
+          "default": "adaptive"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "default": "max"
+        }
       },
       "modalities": {
         "input": [
