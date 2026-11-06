@@ -23,11 +23,11 @@ test("live catalogs are authoritative, including an empty entitled list", () => 
 });
 test("reasoning controls use model-specific effort lists and explicit capability denial", () => {
   const models = modelCatalogFromApi({ data: [
-    { id: "kimi-k3:fast" }, { id: "deepseek-v4.1-flash" },
+    { id: "kimi-k3.1-pro:fast" }, { id: "deepseek-v4.1-flash" },
     { id: "glm-5.3", capabilities: { reasoning_effort: false } },
     { id: "new-model", reasoning_efforts: ["bad", "low", "high"] },
   ] });
-  assert.deepEqual(models.find((m) => m.id === "kimi-k3:fast")?.reasoningEfforts, ["none", "minimal", "low", "medium", "high", "xhigh", "max"]);
+  assert.deepEqual(models.find((m) => m.id === "kimi-k3.1-pro:fast")?.reasoningEfforts, ["none", "minimal", "low", "medium", "high", "xhigh", "max"]);
   assert.deepEqual(models.find((m) => m.id === "deepseek-v4.1-flash")?.reasoningEfforts, ["none", "minimal", "low", "medium", "high", "xhigh", "max"]);
   assert.equal(models.find((m) => m.id === "glm-5.3")?.reasoningEfforts, undefined);
   assert.deepEqual(models.find((m) => m.id === "new-model")?.reasoningEfforts, ["low", "high"]);
