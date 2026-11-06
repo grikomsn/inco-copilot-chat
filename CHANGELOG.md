@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.7
+
+### Patch Changes
+
+- 51035f7: Retire Kimi K3 and adopt Kimi K3.1 Pro (Fast). Inco removed `kimi-k3:fast` from the catalog and `kimi-k3` refuses requests with a 404 `model_not_found` error from 2026-11-06; requests now offer `kimi-k3.1-pro:fast`, live-probed to accept all seven reasoning-effort values with a working `none` Off switch and structured function calls. The bundled public catalog snapshot was refreshed, routing classification re-verified against the Inco model directory, and `docs/models.md` updated with the 2026-11-06 probe results.
+- 51035f7: Refresh the bundled public Inco model catalog: `kimi-k3:fast` left the public catalog and the new `kimi-k3.1-pro:fast` route (image input, $6/$0.60/$30 per million tokens) was added.
+
 ## 1.0.6
 
 ### Patch Changes
