@@ -11,7 +11,7 @@ test("does not advertise unverified or unstructured function calls", () => {
 
 test("explicit live tool capability remains authoritative", () => {
   assert.equal(modelToolCalling("minimax-m3.1-flash:fast", false), false);
-  assert.equal(modelToolCalling("kimi-k3", false), false);
+  assert.equal(modelToolCalling("kimi-k3.1-pro:fast", false), false);
   assert.equal(requiresNonThinkingTools("deepseek-v4.1-flash"), true);
   assert.equal(requiresNonThinkingTools("deepseek-v4.1-flash:fast"), false);
 });

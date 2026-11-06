@@ -9,8 +9,9 @@ import { REASONING_EFFORTS, type ModelEffortSpec, type ReasoningEffort } from ".
 const PROFILES: Readonly<Record<string, ModelEffortSpec>> = {
   "deepseek-v4.1-flash": { efforts: REASONING_EFFORTS, defaultEffort: "high" },
   "deepseek-v4.1-flash:fast": { efforts: REASONING_EFFORTS, defaultEffort: "none" },
+  // Kimi K3 retires on 2026-11-06; `kimi-k3` still lists but refuses requests with 404.
   "kimi-k3": { efforts: ["none", "low", "high", "max"], defaultEffort: "high" },
-  "kimi-k3:fast": { efforts: REASONING_EFFORTS, defaultEffort: "high" },
+  "kimi-k3.1-pro:fast": { efforts: REASONING_EFFORTS, defaultEffort: "high" },
   // `none`, `minimal`, `medium`, and `xhigh` are rejected with HTTP 400.
   "glm-5.3": { efforts: ["low", "high", "max"], defaultEffort: "high" },
   "glm-5.3-flash": { efforts: ["low", "high", "max"], defaultEffort: "high" },
