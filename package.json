@@ -171,7 +171,7 @@
     "probe-models": "node scripts/probe-models.mjs"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.31.0",
+    "@changesets/cli": "3.0.3",
     "@types/node": "^24.0.0",
     "@types/vscode": "^1.125.0",
     "@vscode/vsce": "^3.9.2",
