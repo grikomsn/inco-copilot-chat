@@ -6,20 +6,19 @@
 - This is a strict-TypeScript VS Code `LanguageModelChatProvider`. Use Node.js 22+ and npm; `package-lock.json` is authoritative.
 - Install from a clean checkout with `npm ci`.
 - The extension is **Inco** (independent, not affiliated with Inco AI) and bridges VS Code to the public **Inco AI** service at `api.inco.ai`. Docs must keep that split: extension = Inco, service = Inco AI.
+- `src/kit/` is the shared copilot-chat-kit git submodule. Clone with `--recurse-submodules` (or run `git submodule update --init`). Never edit kit files only here: commit and push the change to the kit repository (inside `src/kit` or in its own checkout), then commit the submodule bump with `git submodule update --remote src/kit`.
 
 ## Code map
 
 - `src/extension.ts`: activation and dependency wiring.
+- `src/kit/`: shared [copilot-chat-kit](https://github.com/grikomsn/copilot-chat-kit) git submodule (Unicode-safe JSON, errors, retry, request deadlines, SSE and Chat Completions parsing, message conversion, history trimming, response writing, usage payloads, pricing, context tiers, credentials, models.dev snapshots, inline-suggestion shell, VS Code API augmentations). Provider quirks stay outside it and configure it through options.
 - `src/commands/commands.ts`: commands, diagnostics, and connection workflows.
-- `src/auth/auth.ts`: credential fingerprint helper (VS Code owns the API keys).
 - `src/provider.ts`: VS Code provider integration, native-entry registration, model discovery, and request lifecycle.
-- `src/provider-profile.ts`: in-memory native-entry credentials and credential references.
-- `src/provider/`: message conversion, request construction, response reporting, and retry policy.
+- `src/provider/`: request construction for this service (message conversion, trimming, reporting, and retry come from the kit).
 - `scripts/probe-models.mjs`: explicit, paid synthetic capability probes; logs metadata only.
 - `src/models/`: live catalog, public fallback snapshot, persisted per-credential caches, reasoning options, and pricing.
 - `src/transport/`: fixed endpoints, request identity, errors, and incremental SSE parsing.
 - `src/usage/`: local usage tracking, cost estimates, and status-bar rendering.
-- `src/vscode/`: proposed VS Code API type augmentations.
 - `scripts/refresh-models.mjs`: public fallback metadata resync and CI reporting.
 - Tests are colocated as `src/**/*.test.ts` using `node:test`; `test/native/index.js` drives an end-to-end provider harness with injected VS Code fakes. `out/` and `*.vsix` are generated artifacts.
 

@@ -34,6 +34,20 @@ The ten-route matrix contains 120 control cases when every route is accessible. 
 
 `npm run refresh-models` refreshes public fallback metadata and writes a Changeset only when it changes. The weekly workflow uses that path to open a metadata PR. Account-private entitlements never enter the public snapshot. Reasoning profiles require explicit probe review; catalog refreshes do not widen them from family-name guesses.
 
+## Shared kit
+
+`src/kit/` is the [copilot-chat-kit](https://github.com/grikomsn/copilot-chat-kit)
+git submodule shared by every Copilot Chat provider extension. It compiles and
+tests with this repository (`npm test` runs its colocated tests too), so a fresh
+clone needs `git clone --recurse-submodules` or `git submodule update --init`.
+
+- Change shared behavior in the kit repository, push it, then run
+  `git submodule update --remote src/kit` here and commit the bump.
+- Keep provider quirks (auth, dialect extensions, cost tables, usage domains)
+  in this repository; configure kit modules through their options instead of
+  editing them in place.
+- Dependabot proposes kit bumps weekly; CI checks out submodules.
+
 ## Release workflow
 
 User-visible changes include a Changeset:

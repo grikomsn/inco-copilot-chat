@@ -1,12 +1,7 @@
+import { normalizeTokenUsage, providerUsagePayload, type ProviderUsagePayload } from "../kit/usage-payload";
+
 import type { ModelCost } from "../models/pricing";
 
-export interface ProviderUsagePayload {
-  prompt_tokens?: number;
-  completion_tokens?: number;
-  total_tokens?: number;
-  prompt_tokens_details?: { cached_tokens: number };
-  completion_tokens_details?: { reasoning_tokens: number };
-}
 export interface RequestUsage {
   readonly modelId: string;
   readonly recordedAt: number;
@@ -39,19 +34,9 @@ export interface UsageDisplayRow {
   readonly detail?: string;
 }
 
+/** The `"usage"` data part for one response; `{}` when no token count is known. */
 export function toProviderUsagePayload(raw: Record<string, unknown>): ProviderUsagePayload {
-  const prompt = count(raw.prompt_tokens ?? raw.input_tokens);
-  const completion = count(raw.completion_tokens ?? raw.output_tokens);
-  const cached = count(record(raw.prompt_tokens_details)?.cached_tokens);
-  const reasoning = count(record(raw.completion_tokens_details)?.reasoning_tokens);
-  const total = count(raw.total_tokens) ?? (prompt !== undefined && completion !== undefined ? prompt + completion : undefined);
-  return {
-    ...(prompt === undefined ? {} : { prompt_tokens: prompt }),
-    ...(completion === undefined ? {} : { completion_tokens: completion }),
-    ...(total === undefined ? {} : { total_tokens: total }),
-    ...(cached === undefined ? {} : { prompt_tokens_details: { cached_tokens: cached } }),
-    ...(reasoning === undefined ? {} : { completion_tokens_details: { reasoning_tokens: reasoning } }),
-  };
+  return providerUsagePayload(normalizeTokenUsage(raw)) ?? {};
 }
 
 export function recordRequestUsage(
@@ -111,9 +96,3 @@ export function formatUsageRows(snapshot: IncoUsageSnapshot): UsageDisplayRow[] 
       description: snapshot.lastRequest.modelId, detail: new Date(snapshot.lastRequest.recordedAt).toLocaleString() }] : [])];
 }
 
-function count(value: unknown): number | undefined {
-  return typeof value === "number" && Number.isFinite(value) && value >= 0 ? Math.floor(value) : undefined;
-}
-function record(value: unknown): Record<string, unknown> | undefined {
-  return typeof value === "object" && value !== null ? value as Record<string, unknown> : undefined;
-}

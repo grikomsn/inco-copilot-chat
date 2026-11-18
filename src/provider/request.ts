@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { resolveMaxOutputTokens } from "../models/catalog";
 import { applyReasoningEffort, type ReasoningEffort } from "../models/options";
-import { trimHistoryToFit } from "./history-trim";
-import { convertMessages } from "./messages";
+import { trimChatHistoryToFit } from "../kit/history-trim";
+import { convertChatMessages } from "../kit/messages";
 import { requiresNonThinkingTools } from "../models/tools";
 
 export function buildRequest(
@@ -20,10 +20,10 @@ export function buildRequest(
     && requiresNonThinkingTools(model) && reasoningEffort !== "none") {
     throw new Error("Standard DeepSeek V4.1 Flash requires Reasoning Effort None for forced tool calls. Select None or use the Fast route.");
   }
-  const convertedMessages = convertMessages(messages, imageInput);
+  const convertedMessages = convertChatMessages(messages, vscode, { label: "Inco", imageInput });
   const requestMessages = contextCapTokens === undefined
     ? convertedMessages
-    : [...trimHistoryToFit(convertedMessages, contextCapTokens).items];
+    : [...trimChatHistoryToFit(convertedMessages, contextCapTokens).items];
   const tools = (options.tools ?? []).map((tool) => ({
     type: "function",
     function: {
