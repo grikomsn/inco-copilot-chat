@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { modelCostFromApi, modelPricingFields } from "./pricing";
+import { modelCostFromApi } from "./pricing";
+import { modelPricingFields } from "../kit/pricing";
 
 test("Inco prices are USD per million including cached_input", () => {
   const cost = modelCostFromApi({ input: 3, cached_input: 0.3, output: 15 });

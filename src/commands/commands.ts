@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import type { IncoProvider } from "../provider";
-import { messageOf } from "../errors";
+import { messageOf } from "../kit/errors";
 import { API_BASE } from "../transport/protocol";
 import { formatUsageRows } from "../usage/domain";
 

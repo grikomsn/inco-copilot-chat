@@ -1,8 +1,15 @@
 import * as vscode from "vscode";
 import { randomUUID } from "node:crypto";
-import { estimateChatTokens } from "./provider/token-count";
-import { withContextOverflowHint } from "./provider/context-error";
-import { messageOf } from "./errors";
+import { ChatCompletionStreamParser } from "./kit/chat-completions";
+import { contextSizeOptions, resolveContextCap, resolveContextSize } from "./kit/context-size";
+import { apiKeyFromConfiguration, credentialReference, Credentials } from "./kit/credentials";
+import { httpError, isRejectedCredential, messageOf, withContextOverflowHint } from "./kit/errors";
+import { modelPricingFields } from "./kit/pricing";
+import { ChatEventReporter, ResponseWriter } from "./kit/response-writer";
+import { fetchWithRetry, serverErrorStatuses } from "./kit/retry";
+import { readTextStream, RequestDeadline } from "./kit/stream";
+import { estimateChatTokens } from "./kit/token-count";
+import { stringifyWellFormedJson } from "./kit/unicode";
 import {
   advertisedModelLimits,
   FALLBACK_MODEL_METADATA,
@@ -11,32 +18,20 @@ import {
   modelCatalogFromApi,
   type IncoModelMetadata,
 } from "./models/catalog";
-import { modelPricingFields } from "./models/pricing";
 import {
   DEFAULT_REASONING_EFFORT,
   applyReasoningEffort,
   buildModelConfigurationSchema,
-  contextSizeOptions,
   modelEffortSpec,
-  resolveContextCap,
-  resolveContextSize,
   resolveReasoningEffort,
   type ModelEffortSpec,
   type ReasoningEffort,
 } from "./models/options";
 import { parseCatalogSnapshots } from "./models/cache";
-import { ChatCompletionStreamParser } from "./transport/sse";
 import { INCO_ENDPOINTS, incoHeaders } from "./transport/protocol";
-import { apiError, isRejectedKey } from "./transport/errors";
 import { modelFamily } from "./models/family";
-import { apiKeyFromConfiguration, Credentials } from "./provider-profile";
-import { credentialReference } from "./auth/auth";
-import { isTransientNetworkError, isTransientServerError, retryDelayMs } from "./provider/retry";
-import { messageToText } from "./provider/messages";
 import { buildRequest } from "./provider/request";
-import { StreamResponseReporter } from "./provider/response";
-import { recordRequestUsage, type IncoUsageSnapshot } from "./usage/domain";
-import { stringifyWellFormedJson } from "./transport/unicode";
+import { recordRequestUsage, toProviderUsagePayload, type IncoUsageSnapshot } from "./usage/domain";
 import { filterByServing } from "./models/privacy";
 
 export { API_BASE } from "./transport/protocol";
@@ -154,7 +149,7 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
       try {
         await this.refreshCatalog(credentialRef, apiKey, token);
       } catch (error) {
-        if (isRejectedKey(error)) {
+        if (isRejectedCredential(error)) {
           // A refused key would fail every request; retry after the cache
           // window rather than on every model-picker query.
           this.refreshedAt.set(credentialRef, Date.now());
@@ -246,27 +241,14 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
       Boolean(model.capabilities?.imageInput),
       resolveContextCap(resolveContextSize(options.modelConfiguration), model.maxInputTokens),
     );
-    const reporter = new StreamResponseReporter(progress, vscode, randomUUID(),
-      (usage) => this.captureRequestUsage(usage, model.rawModelId, model.credentialRef));
-    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
-    const controller = new AbortController();
-    const cancellation = token.onCancellationRequested(() => controller.abort());
+    const reporter = new ChatEventReporter(new ResponseWriter(progress, vscode, "inco", randomUUID()), {
+      label: "Inco",
+      toUsagePayload: toProviderUsagePayload,
+      onUsage: (usage) => this.captureRequestUsage(usage, model.rawModelId, model.credentialRef),
+    });
     const timeoutSeconds = Math.max(10, this.configuration.get("requestTimeoutSeconds", 600));
     const idleTimeoutSeconds = Math.max(10, this.configuration.get("streamIdleTimeoutSeconds", 120));
-    let timedOut: "total" | "idle" | undefined;
-    const totalTimeout = setTimeout(() => {
-      timedOut = "total";
-      controller.abort();
-    }, timeoutSeconds * 1000);
-    let idleTimeout: ReturnType<typeof setTimeout> | undefined;
-    const resetIdleTimeout = (): void => {
-      if (idleTimeout) clearTimeout(idleTimeout);
-      idleTimeout = setTimeout(() => {
-        timedOut = "idle";
-        controller.abort();
-      }, idleTimeoutSeconds * 1000);
-    };
-    resetIdleTimeout();
+    const deadline = new RequestDeadline({ totalMs: timeoutSeconds * 1000, idleMs: idleTimeoutSeconds * 1000, cancellation: token });
     try {
       if (this.debugLogging) {
         this.output.appendLine(
@@ -279,48 +261,26 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
         method: "POST",
         headers: this.requestHeaders(apiKey, "text/event-stream"),
         body: stringifyWellFormedJson(requestBody),
-        signal: controller.signal,
+        signal: deadline.signal,
       });
-      if (!response.ok) throw await apiError(`Inco request failed for ${model.rawModelId}`, response);
+      if (!response.ok) throw await httpError(`Inco request failed for ${model.rawModelId}`, response);
       if (!response.body) throw new Error("Inco returned an empty response stream");
 
-      const parser = new ChatCompletionStreamParser();
-      reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      while (true) {
-        if (token.isCancellationRequested) {
-          await reader.cancel();
-          return;
-        }
-        const result = await reader.read();
-        if (result.done) break;
-        resetIdleTimeout();
-        for (const event of parser.push(decoder.decode(result.value, { stream: true }))) {
-          // The final streamed chunk carries the `usage` object; capture it
-          // when present so the status bar reflects the request immediately.
-          reporter.report(event);
-        }
-      }
-      for (const event of parser.push(decoder.decode())) reporter.report(event);
+      const parser = new ChatCompletionStreamParser({ label: "Inco" });
+      const completed = await readTextStream(response.body, (text) => {
+        // The final streamed chunk carries `usage`; the reporter captures it
+        // so the status bar reflects the request immediately.
+        for (const event of parser.push(text)) reporter.report(event);
+      }, { deadline, isCancelled: () => token.isCancellationRequested });
+      if (!completed) return;
       for (const event of parser.finish()) reporter.report(event);
       parser.validateCompletion(requestBody.tool_choice === "required");
     } catch (error) {
       if (token.isCancellationRequested) return;
-      if (timedOut === "idle")
-        throw new Error(`Inco request for ${model.rawModelId} received no data for ${idleTimeoutSeconds} seconds`);
-      if (timedOut === "total")
-        throw new Error(`Inco request for ${model.rawModelId} exceeded ${timeoutSeconds} seconds`);
-      throw withContextOverflowHint(error);
+      throw deadline.timeoutError(`Inco request for ${model.rawModelId}`) ?? withContextOverflowHint(error);
     } finally {
       reporter.finish();
-      controller.abort();
-      if (reader) {
-        await reader.cancel().catch(() => undefined);
-        reader.releaseLock();
-      }
-      clearTimeout(totalTimeout);
-      if (idleTimeout) clearTimeout(idleTimeout);
-      cancellation.dispose();
+      deadline.dispose();
     }
   }
 
@@ -366,7 +326,7 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
       body: JSON.stringify(applyReasoningEffort(requestBody, reasoningEffort)),
       signal: AbortSignal.timeout(60_000),
     });
-    if (!response.ok) throw await apiError("Inco connection test failed", response);
+    if (!response.ok) throw await httpError("Inco connection test failed", response);
     const responseBody = (await response.json()) as {
       choices?: Array<{ message?: { content?: string } }>;
       usage?: Record<string, unknown>;
@@ -396,7 +356,7 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
       headers: this.requestHeaders(apiKey, "application/json, application/problem+json"),
       signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30_000)]) : AbortSignal.timeout(30_000),
     });
-    if (!response.ok) throw await apiError("Unable to list Inco models", response);
+    if (!response.ok) throw await httpError("Unable to list Inco models", response);
     const body: unknown = await response.json();
     const models = modelCatalogFromApi(body);
     if (this.debugLogging) this.output.appendLine(`[models] ${models.map(({ id }) => id).join(", ")}`);
@@ -451,22 +411,12 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
     return incoHeaders(apiKey, accept, this.userAgent);
   }
 
-  private async fetchInference(init: RequestInit): Promise<Response> {
-    for (let attempt = 0; ; attempt += 1) {
-      try {
-        const response = await this.fetcher(INCO_ENDPOINTS.chat, init);
-        if (attempt >= 2 || !isTransientServerError(response.status)) return response;
-        const delay = retryDelayMs(attempt, response.headers.get("retry-after"));
-        this.output.appendLine(`[retry] transient HTTP ${response.status}; attempt=${attempt + 2} delayMs=${delay}`);
-        await response.body?.cancel().catch(() => undefined);
-        await waitForRetry(delay, init.signal);
-      } catch (error) {
-        if (attempt >= 2 || !isTransientNetworkError(error)) throw error;
-        const delay = retryDelayMs(attempt);
-        this.output.appendLine(`[retry] transient network failure; attempt=${attempt + 2} delayMs=${delay}`);
-        await waitForRetry(delay, init.signal);
-      }
-    }
+  private fetchInference(init: RequestInit): Promise<Response> {
+    return fetchWithRetry(() => this.fetcher(INCO_ENDPOINTS.chat, init), {
+      isTransientStatus: serverErrorStatuses,
+      signal: init.signal,
+      log: (message) => this.output.appendLine(message),
+    });
   }
 
   /**
@@ -505,17 +455,3 @@ export class IncoProvider implements vscode.LanguageModelChatProvider<IncoModel>
 const CATALOG_STATE_KEY = "incoCopilot.entryCatalogs.v2";
 const USAGE_STATE_KEY = "incoCopilot.entryUsage.v1";
 
-async function waitForRetry(milliseconds: number, signal: AbortSignal | null | undefined): Promise<void> {
-  if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
-  await new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(resolve, milliseconds);
-    signal?.addEventListener(
-      "abort",
-      () => {
-        clearTimeout(timer);
-        reject(new DOMException("Aborted", "AbortError"));
-      },
-      { once: true },
-    );
-  });
-}
