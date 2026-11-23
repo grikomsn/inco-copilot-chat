@@ -178,6 +178,50 @@
       "parameters": 320000000000
     },
     {
+      "id": "glm-5.3-flash:batch",
+      "object": "model",
+      "created": 1792616093,
+      "owned_by": "inco",
+      "name": "GLM 5.3 Flash (Batch)",
+      "mode": "batch",
+      "context_length": 1048576,
+      "pricing": {
+        "input": 0.09,
+        "cached_input": 0.018,
+        "output": 0.3
+      },
+      "reasoning": {
+        "modes": {
+          "supported": [
+            "enabled"
+          ],
+          "default": "enabled"
+        },
+        "efforts": {
+          "supported": [
+            "low",
+            "high",
+            "max"
+          ],
+          "default": "max"
+        }
+      },
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "video"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "license": "MIT",
+      "license_url": "https://huggingface.co/zai-org/GLM-5.3-Flash/blob/main/LICENSE",
+      "model_card_url": "https://huggingface.co/zai-org/GLM-5.3-Flash",
+      "parameters": 320000000000
+    },
+    {
       "id": "glm-5.3-flash:fast",
       "object": "model",
       "created": 1788137086,
@@ -222,59 +266,17 @@
       "parameters": 320000000000
     },
     {
-      "id": "glm-5.3:fast",
+      "id": "kimi-k3.1-pro:fast",
       "object": "model",
-      "created": 1787990964,
+      "created": 1793910869,
       "owned_by": "inco",
-      "name": "GLM 5.3 (Fast)",
+      "name": "Kimi K3.1 Pro (Fast)",
       "mode": "fast",
       "context_length": 1048576,
       "pricing": {
-        "input": 2.8,
-        "cached_input": 0.52,
-        "output": 8.8
-      },
-      "reasoning": {
-        "modes": {
-          "supported": [
-            "enabled"
-          ],
-          "default": "enabled"
-        },
-        "efforts": {
-          "supported": [
-            "low",
-            "high",
-            "max"
-          ],
-          "default": "max"
-        }
-      },
-      "modalities": {
-        "input": [
-          "text"
-        ],
-        "output": [
-          "text"
-        ]
-      },
-      "license": "GLM-5.3 License",
-      "license_url": "https://huggingface.co/zai-org/GLM-5.3/blob/main/LICENSE",
-      "model_card_url": "https://huggingface.co/zai-org/GLM-5.3",
-      "parameters": 744000000000
-    },
-    {
-      "id": "kimi-k3",
-      "object": "model",
-      "created": 1790294854,
-      "owned_by": "inco",
-      "name": "Kimi K3",
-      "mode": "standard",
-      "context_length": 1048576,
-      "pricing": {
-        "input": 3,
-        "cached_input": 0.3,
-        "output": 15
+        "input": 4,
+        "cached_input": 0.2,
+        "output": 20
       },
       "reasoning": {
         "modes": {
@@ -301,39 +303,23 @@
           "text"
         ]
       },
-      "license": "Kimi K3 License",
-      "license_url": "https://huggingface.co/moonshotai/Kimi-K3/blob/main/LICENSE",
-      "model_card_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "license": "Kimi K3.1-Pro License",
+      "license_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro/blob/main/LICENSE",
+      "model_card_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
       "parameters": 2800000000000
     },
     {
-      "id": "kimi-k3.1-pro:fast",
+      "id": "kimi-k3.1-pro:standard",
       "object": "model",
-      "created": 1793910869,
+      "created": 1794030431,
       "owned_by": "inco",
-      "name": "Kimi K3.1 Pro (Fast)",
-      "mode": "fast",
+      "name": "Kimi K3.1 Pro (Standard)",
+      "mode": "standard",
       "context_length": 1048576,
       "pricing": {
-        "input": 6,
-        "cached_input": 0.6,
-        "output": 30
-      },
-      "reasoning": {
-        "modes": {
-          "supported": [
-            "enabled"
-          ],
-          "default": "enabled"
-        },
-        "efforts": {
-          "supported": [
-            "low",
-            "high",
-            "max"
-          ],
-          "default": "max"
-        }
+        "input": 2,
+        "cached_input": 0.2,
+        "output": 10
       },
       "modalities": {
         "input": [
